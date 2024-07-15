@@ -12,25 +12,83 @@ export async function currentUser(options?: { [key: string]: any }) {
   });
 }
 
-/** 退出登录接口 POST /api/login/outLogin */
-export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
-    method: 'POST',
-    ...(options || {}),
-  });
+export async function checkAuth(options?: { [key: string]: any }) {
+  try {
+    const response = await fetch('https://localhost:7119/api/Account/check-auth', {
+      method: 'GET',
+      credentials: 'include',
+      ...(options || {}),
+    });
+    
+    console.log(response); // Выводим ответ от сервера для отладки
+    if (!response.ok) {
+      throw new Error('Ошибка при проверке аутентификации');
+    }
+
+    return await response.json(); // Возвращаем данные аутентифицированного пользователя
+  } catch (error) {
+    console.error(error);
+    return { error: 'Ошибка при проверке аутентификации' }; // Возвращаем объект с ошибкой
+  }
 }
 
-/** 登录接口 POST /api/login/account */
-export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function outLogin(options?: { [key: string]: any }) {
+  try {
+    const response = await fetch('https://localhost:7119/api/Account/logout', {
+      method: 'POST',
+      ...(options || {}),
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка при выходе из системы');
+    }
+
+    return { success: true }; // Возвращаем объект, указывающий успешный выход из системы
+  } catch (error) {
+    console.error(error);
+    return { error: 'Ошибка при выходе из системы' }; // Возвращаем объект с ошибкой
+  }
 }
+
+export interface LoginResult {
+  userData?: any;
+
+  error?: string; // Добавляем поле для ошибки
+}
+
+export async function login(body: API.LoginParams, options?: { [key: string]: any }): Promise<LoginResult> {
+  try {
+    const response = await fetch('https://localhost:7119/api/Account/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      ...options,
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка аутентификации');
+    }
+
+    const userData = await response.json();
+    
+    // Сохраняем userId в localStorage
+    localStorage.setItem('userId', userData.userId);
+
+    return { userData };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Ошибка аутентификации' };
+  }
+}
+
+
+
+
+
+
+
 
 /** 此处后端没有提供注释 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {

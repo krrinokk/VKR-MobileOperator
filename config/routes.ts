@@ -11,61 +11,68 @@
     ],
   },
   {
+    
     path: '/welcome',
     name: 'Главная',
-    icon: 'smile',
+
     component: './Welcome',
   },
   {
     path: '/chat',
-    name: 'Чат',
+   name: 'Чат',
     icon: 'smile',
-    component: './Chat',
+     component: './Chat',
   },
   {
     path: '/contracts',
     name: 'Контракты',
- 
+    icon: 'table',
     component: './Contract',
   },
+  // {
+  //   path: '/costdetails',
+  //   name: 'Детализация расходов',
+
+  //   component: './AdminTariff',
+  // },
   {
     path: '/clients',
     name: 'Клиентская база',
-  
-
+    icon: 'table',
     routes: [
       {
         path: '/clients/list',
         name: 'Список клиентов',
         component: './Clients',
       },
-     
     ],
   },
   {
     path: '/admin',
-    name: 'Тарифные планы',
+    name: 'Услуги',
     icon: 'crown',
-    access: 'canAdmin',
+    // access: 'canAdmin',
     routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
+    
       {
         path: '/admin/tariffs',
         name: 'Тарифные планы',
         component: './Tariff',
       },
+      {
+        path: '/admin/services',
+        name: 'Подписки',
+        component: './Services',
+      },
     ],
   },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
-  
+  // {
+  //   name: 'list.table-list',
+   
+  //   path: '/list',
+  //   component: './TableList',
+  // },
+
   {
     path: '/',
     redirect: '/welcome',

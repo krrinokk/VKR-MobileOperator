@@ -1,11 +1,10 @@
 import { ProDescriptions } from '@ant-design/pro-components';
-import { Button } from 'antd';
 import dayjs from 'dayjs';
 
 const data = [
   {
     label: 'Транзакция',
-    renderText: (_ => _ + _),
+    renderText: (_) => _ + _,
     ellipsis: true,
   },
   {
@@ -25,7 +24,7 @@ const data = [
     label: 'Интервал дат',
     valueType: 'dateTimeRange',
     content: [dayjs().add(-1, 'd').valueOf(), dayjs().valueOf()],
-  }
+  },
 ];
 
 export default () => {

@@ -9,4 +9,4 @@ import Footer from './Footer';
 import MainComponent from './RightContent';
 import { AvatarDropdown, AvatarName } from './RightContent/AvatarDropdown';
 
-export { Footer, MainComponent,  AvatarDropdown, AvatarName };
+export { AvatarDropdown, AvatarName, Footer, MainComponent };

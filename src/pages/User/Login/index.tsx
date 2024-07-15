@@ -1,6 +1,7 @@
 import { Footer } from '@/components';
 import { login } from '@/services/ant-design-pro/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import { checkAuth } from '@/services/ant-design-pro/api';
+// import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -118,29 +119,42 @@ const Login: React.FC = () => {
     try {
       // Вход в систему
       const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: 'Вход успешен!',
+      
+      // Проверяем успешность входа
+      if (!msg.userData) { // Здесь изменено условие с !msg.login на !msg.userData
+        const defaultLoginFailureMessage = intl.formatMessage({
+          id: 'pages.login.failure',
+          defaultMessage: 'Ошибка входа. Пользователь с таким логином не найден!',
         });
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
-        return;
+        message.error(defaultLoginFailureMessage);
+        return; // Останавливаем выполнение функции в случае неудачного входа
       }
-      console.log(msg);
-      // Если вход не удался, установить сообщение об ошибке пользователя
-      setUserLoginState(msg);
+      
+      // Если вход успешен, выводим сообщение об успешном входе и обновляем информацию о пользователе
+      const defaultLoginSuccessMessage = intl.formatMessage({
+        id: 'pages.login.success',
+        defaultMessage: 'Вход успешен!',
+      });
+    
+
+      console.error(' не Ошибка при выполнении запроса:');
+      message.success(defaultLoginSuccessMessage);
+      await fetchUserInfo();
+      const urlParams = new URL(window.location.href).searchParams;
+      
+
+
+      history.push(urlParams.get('redirect') || '/');
+
     } catch (error) {
+      console.error(error);
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
-        defaultMessage: 'Ошибка входа. Пожалуйста, повторите попытку!',
+        defaultMessage: 'Ошибка входа. Пользователь с таким логином не найден!',
       });
-      console.log(error);
       message.error(defaultLoginFailureMessage);
     }
-};
+   };
 const { status, type: loginType } = userLoginState;
 
 return (
@@ -208,14 +222,14 @@ return (
         {type === 'account' && (
           <>
             <ProFormText
-              name="username"
+              name="login"
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined />,
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.username.placeholder',
-                defaultMessage: 'Имя пользователя: admin или user',
+                defaultMessage: 'Имя пользователя.',
               })}
               rules={[
                 {
@@ -237,7 +251,7 @@ return (
               }}
               placeholder={intl.formatMessage({
                 id: 'pages.login.password.placeholder',
-                defaultMessage: 'Пароль: ant.design',
+                defaultMessage: 'Пароль',
               })}
               rules={[
                 {
@@ -324,15 +338,15 @@ return (
                   ),
                 },
               ]}
-              onGetCaptcha={async (phone) => {
-                const result = await getFakeCaptcha({
-                  phone,
-                });
-                if (!result) {
-                  return;
-                }
-                message.success('Код подтверждения успешно получен! Код: 1234');
-              }}
+              // onGetCaptcha={async (phone) => {
+              //   const result = await getFakeCaptcha({
+              //     phone,
+              //   });
+              //   if (!result) {
+              //     return;
+              //   }
+              //   message.success('Код подтверждения успешно получен! Код: 1234');
+              // }}
             />
           </>
         )}

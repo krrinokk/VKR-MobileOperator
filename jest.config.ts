@@ -14,7 +14,7 @@ export default async () => {
       ...(config?.testEnvironmentOptions || {}),
       url: 'http://localhost:8000',
     },
-    setupFiles: [...(config.setupFiles || []), './tests/setupTests.jsx'],
+    setupFiles: [...(config.setupFiles || []), './tests/Tests.test.jsx'],
     globals: {
       ...config.globals,
       localStorage: null,

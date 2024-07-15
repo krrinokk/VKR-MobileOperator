@@ -1,126 +1,90 @@
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import {
-  ProForm,
-  ProFormDatePicker,
-  ProFormText,
-  QueryFilter,
-} from '@ant-design/pro-components';
-import { Input, Tabs } from 'antd';
-import React, { useState } from 'react';
+import { ProCard, StatisticCard } from '@ant-design/pro-components';
+import RcResizeObserver from 'rc-resize-observer';
+import { useState } from 'react';
 
-type AdvancedSearchProps = {
-  onFilterChange?: (allValues: any) => void;
-  onSearch?: (text: string) => void;
-  onTypeChange?: (type: string) => void;
-  defaultType?: string;
-};
+const { Statistic } = StatisticCard;
 
-const AdvancedSearch: React.FC<AdvancedSearchProps> = (props) => {
-  const {
-    onSearch,
-    onTypeChange,
-    defaultType = 'articles',
-    onFilterChange,
-  } = props;
-  const [searchText, setSearchText] = useState<string>();
-  const [showFilter, setShowFilter] = useState<boolean>(true);
-  const quickSearch = ['小程序开发', '入驻', 'ISV 权限'];
+export default () => {
+  const [responsive, setResponsive] = useState(false);
+
   return (
-    <div
-      style={{
-        padding: 24,
+    <RcResizeObserver
+      key="resize-observer"
+      onResize={(offset) => {
+        setResponsive(offset.width < 596);
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-        }}
+      <ProCard
+        title="数据概览"
+        extra="2019年9月28日 星期五"
+        split={responsive ? 'horizontal' : 'vertical'}
+        headerBordered
+        bordered
       >
-        <Input.Search
-          placeholder="请输入"
-          enterButton="搜索"
-          value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-          onSearch={onSearch}
-          style={{ maxWidth: 522, width: '100%' }}
+        <ProCard split="horizontal">
+          <ProCard split="horizontal">
+            <ProCard split="vertical">
+              <StatisticCard
+                statistic={{
+                  title: '昨日全部流量',
+                  value: 234,
+                  description: (
+                    <Statistic
+                      title="较本月平均流量"
+                      value="8.04%"
+                      trend="down"
+                    />
+                  ),
+                }}
+              />
+              <StatisticCard
+                statistic={{
+                  title: '本月累计流量',
+                  value: 234,
+                  description: (
+                    <Statistic title="月同比" value="8.04%" trend="up" />
+                  ),
+                }}
+              />
+            </ProCard>
+            <ProCard split="vertical">
+              <StatisticCard
+                statistic={{
+                  title: '运行中实验',
+                  value: '12/56',
+                  suffix: '个',
+                }}
+              />
+              <StatisticCard
+                statistic={{
+                  title: '历史实验总数',
+                  value: '134',
+                  suffix: '个',
+                }}
+              />
+            </ProCard>
+          </ProCard>
+          <StatisticCard
+            title="流量走势"
+            chart={
+              <img
+               
+                width="100%"
+              />
+            }
+          />
+        </ProCard>
+        <StatisticCard
+          title="流量占用情况"
+          chart={
+            <img
+             
+              alt="大盘"
+              width="100%"
+            />
+          }
         />
-        <div
-          style={{
-            display: 'flex',
-            gap: 12,
-          }}
-        >
-          {quickSearch.map((text) => (
-            <a
-              key={text}
-              onClick={() => {
-                setSearchText(text);
-                if (onSearch) {
-                  onSearch(text);
-                }
-              }}
-            >
-              {text}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      <Tabs
-        defaultActiveKey={defaultType}
-        onChange={onTypeChange}
-        tabBarExtraContent={
-          <a
-            style={{
-              display: 'flex',
-              gap: 4,
-            }}
-            onClick={() => {
-              setShowFilter(!showFilter);
-            }}
-          >
-            高级筛选 {showFilter ? <UpOutlined /> : <DownOutlined />}
-          </a>
-        }
-        items={[
-          {
-            key: 'articles',
-            label: '文章',
-          },
-          {
-            key: 'projects',
-            label: '项目',
-          },
-          {
-            key: 'applications',
-            label: '应用',
-          },
-        ]}
-      />
-
-      {showFilter ? (
-        <QueryFilter
-          submitter={false}
-          span={24}
-          labelWidth="auto"
-          split
-          onChange={onFilterChange}
-        >
-          <ProForm.Group title="姓名">
-            <ProFormText name="name" />
-          </ProForm.Group>
-          <ProForm.Group title="详情">
-            <ProFormText name="age" label="年龄" />
-            <ProFormDatePicker name="birth" label="生日" />
-          </ProForm.Group>
-        </QueryFilter>
-      ) : null}
-    </div>
+      </ProCard>
+    </RcResizeObserver>
   );
 };
-
-export default AdvancedSearch;
